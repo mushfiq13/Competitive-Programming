@@ -14,12 +14,10 @@ struct data {
             : sum(v), prop(x) {}
 } seg[4*SIZE];
 
-int ar[SIZE];
-
 void build (int node, int L, int R)
 {
+    seg[node] = data (0, 0);
     if (L == R) {
-            seg[node] = data (ar[L], 0);
             return;
     }
     int mid = (L + R) / 2;
@@ -27,7 +25,6 @@ void build (int node, int L, int R)
     int rt = node * 2 + 1;
     build (lf, L, mid);
     build (rt, mid+1, R);
-    seg[node] = data (seg[lf].sum + seg[rt].sum, 0);
 }
 
 void update (int node, int L, int R, int l, int r, int add)
