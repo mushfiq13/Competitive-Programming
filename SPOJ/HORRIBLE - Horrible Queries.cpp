@@ -55,7 +55,6 @@ pll query (int node, int L, int R, int l, int r)
     return seg[node].prop * (r - l + 1)
             + query (lf, L, mid, l, min (r, mid))
             + query (rt, mid+1, R, max (l, mid+1), r);
-
 }
 
 int main (int argc, char **argv)
