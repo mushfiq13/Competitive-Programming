@@ -21,7 +21,7 @@ void print (vector <int> ar, int n)
 
 int main()
 {
-    int n, x, flag = 0;
+    int n, x;
     vector<int> inc, dec;
     map <int, int> mp;
 
@@ -29,24 +29,21 @@ int main()
     for (int i=0; i<n; ++i) {
             scanf("%d", &x);
             mp[x]++;
-            if (mp[x] > 2)
-                    flag = 1;
+            if (mp[x] > 2) {
+                    puts("NO");
+                    return 0;
+            }
+            if (mp[x] == 1)
+                    inc.push_back(x);
             else
-                    if (mp[x] == 1)
-                            inc.push_back(x);
-                    else
-                            dec.push_back(x);
+                    dec.push_back(x);
     }
 
-    if (flag)
-            puts("NO");
-    else {
-            sort(inc.begin(), inc.end());
-            sort(dec.begin(), dec.end(), greater<int>());
-            puts("YES");
-            print(inc, inc.size());
-            print(dec, dec.size());
-    }
+    sort(inc.begin(), inc.end());
+    sort(dec.begin(), dec.end(), greater<int>());
+    puts("YES");
+    print(inc, inc.size());
+    print(dec, dec.size());
 
     return 0;
 }
