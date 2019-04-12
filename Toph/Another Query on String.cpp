@@ -1,7 +1,5 @@
 #include <iostream>
-#include <vector>
 #include <cstdio>
-#include <algorithm>
 using namespace std;
 
 #define SIZE 100000
