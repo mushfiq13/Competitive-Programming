@@ -3,6 +3,7 @@ using namespace std;
 
 const int Max = 1e5 + 10;
 typedef struct Data data;
+typedef long long ll;
 
 struct Data {
     int lf, rt;
@@ -56,9 +57,10 @@ void shift_right (int x, int y)
 
 int main()
 {
-    int n, m, cs=0;
+    ll n;
+    int m, cs=0;
 
-    while (~scanf("%d %d", &n, &m)) {
+    while (~scanf("%lld %d", &n, &m)) {
         for (int i=0; i<=n+1; ++i) {
                 node[i].lf = i-1;
                 node[i].rt = i+1;
@@ -85,13 +87,11 @@ int main()
                 }
         }
 
-        long long sum = 0;
-        if (rev == 0)
-            for (int i=node[0].rt; i <= n; i = node[node[i].rt].rt)
-                sum += i;
-        else
-            for (int i=node[n+1].lf; i > 0; i = node[node[i].lf].lf)
-                sum += i;
+        ll sum = 0;
+        for (int i=node[0].rt; i <= n; i = node[node[i].rt].rt)
+            sum += i;
+        if (rev)
+            sum = (n * (n+1) >> 1) - sum;
 
         printf("Case %d: %lld\n", ++cs, sum);
     }
