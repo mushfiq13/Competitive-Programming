@@ -1,57 +1,49 @@
-#include <cstdio>
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
-#define SIZE 2*100005
+const int Max = 2e5 + 5;
 
-int map[4*SIZE];
-int seg[4*SIZE];
+bool flag;
+int ans;
+int seg[4*Max], u[Max>>1], v[Max>>1];
 
-void update (int node, int L, int R, int l, int r, int ith)
+void update (int node, int L, int R, int l, int r)
 {
     if (l > r)
             return;
+    if (seg[node]) return;
     if (L == l && R == r) {
-            seg[node] = ith;
+            if (flag) {
+                flag = false; ++ans;
+            }
+            seg[node] = 1;
             return;
     }
     int mid = (L + R) / 2;
-    update (node * 2, L, mid, l, min (r, mid), ith);
-    update (node * 2 + 1, mid+1, R, max (l, mid+1), r, ith);
-}
-
-int query (int node, int L, int R, int ith)
-{
-    ith = max (ith, seg[node]);
-    if (L == R) {
-            if (ith && map[ith] == 0) {
-                    map[ith] = 1;
-                    return 1;
-            }
-            return 0;
-    }
-    int mid = (L + R) / 2;
-    return query (node * 2, L, mid, ith)
-            + query (node * 2 + 1, mid+1, R, ith);
+    update (node * 2, L, mid, l, min (r, mid));
+    update (node * 2 + 1, mid+1, R, max (l, mid+1), r);
+    if (seg[node*2] && seg[node*2+1])
+        seg[node] = 1;
 }
 
 int main (int argc, char **argv)
 {
-    int t, n, u, v, cs = 0;
+    int t, n, cs = 0;
 
     scanf("%d", &t);
 
     while (t--) {
             scanf("%d", &n);
             for (int i=1; i<=8*n; ++i)
-                    seg[i] = map[i] = 0;
-
-            for (int i=1; i<=n; ++i) {
-                    scanf("%d %d", &u, &v);
-                    update (1, 1, 2*n, u, v, i);
+                    seg[i] = 0;
+            for (int i=1; i<=n; ++i)
+                    scanf("%d %d", &u[i], &v[i]);
+            ans = 0;
+            for (int i=n; i>=1; --i) {
+                flag = true;
+                update (1, 1, 2*n, u[i], v[i]);
             }
-
-            printf("Case %d: %d\n", ++cs, query (1, 1, 2*n, 0));
+            printf("Case %d: %d\n", ++cs, ans);
     }
 
     return 0;
