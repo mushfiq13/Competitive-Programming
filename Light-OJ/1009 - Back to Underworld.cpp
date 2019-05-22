@@ -5,7 +5,7 @@ const int MAXN = 2e4 + 5;
 
 vector<int> adj[MAXN];
 int cntone, cntzero;
-int vis[MAXN], vam[MAXN], lyk[MAXN];
+int vis[MAXN];
 
 void dfs(int v)
 {
