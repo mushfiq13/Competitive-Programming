@@ -12,7 +12,7 @@ int sol (int n) {
 
     int ans = 0;
     for (int a=1; a<=n; ++a) {
-        for (int c=1; c<=n; ++c) {
+        for (int c=a; c<=n; ++c) {
             int sum = 0;
             for (int i=1; i<=n; ++i) {
                 if (col[c][i] - col[a-1][i] != c-a+1)
