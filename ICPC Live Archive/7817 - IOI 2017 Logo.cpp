@@ -7,16 +7,13 @@ typedef map<int, int> mii;
 int dd[3] = {3, 2, 1};
 
 vi get_ID (vi v, mii f) {
-    if (v.size() == 1) return v;
     int mx = 0;
-    for (int q : v) {
+    for (int q : v)
         if (f[q] > mx) mx = f[q];
-    }
-    vi v2;
-    for (int q: v) {
-        if (f[q] == mx) v2.push_back(q);
-    }
-    return v2;
+    vi ans;
+    for (int q: v)
+        if (f[q] == mx) ans.push_back(q);
+    return ans;
 }
 
 int main() {
@@ -24,31 +21,29 @@ int main() {
 
     while (cin >> n, n) {
         int mx = 0;
-        vi v;
         mii f, tie[3];
         while (n--) {
             cin >> d;
             for (int i=0; i<d; ++i) {
                 cin >> x;
-                if (!f[x]) v.push_back(x);
                 f[x] += dd[i];
                 tie[i][x] += dd[i];
                 if (f[x] > mx) mx = f[x];
             }
         }
 
-        vi v2;
-        for (int q : v) {
-            if (f[q] == mx) v2.push_back(q);
+        vi ans;
+        for (mii::iterator it=f.begin(); it!=f.end(); ++it) {
+            if (it->second == mx) ans.push_back(it->first);
         }
 
-        v = get_ID (v2, tie[0]);
-        v = get_ID (v, tie[1]);
+        ans = get_ID (ans, tie[0]);
+        ans = get_ID (ans, tie[1]);
 
-        sort(v.begin(), v.end());
-        for (int i=0; i<v.size(); ++i) {
+        sort(ans.begin(), ans.end());
+        for (int i=0; i<ans.size(); ++i) {
             if (i) putchar(' ');
-            printf("%d", v[i]);
+            printf("%d", ans[i]);
         }
         puts("");
     }
