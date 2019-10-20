@@ -17,18 +17,14 @@ int main() {
 
         stack <int> s;
         int ans = 0;
-        for (int i=1; i<=n; ++i) {
-            while (!s.empty() && a[s.top()] >= a[i]) {
+        for (int i=1; i<=n+1; ++i) {
+            int h = i <= n ? a[i] : 0;
+            while (!s.empty() && a[s.top()] > h) {
                 int top_id = s.top();
                 s.pop();
                 ans = max (ans, a[top_id] * (s.empty() ? i-1 : i-s.top()-1));
             }
             s.push(i);
-        }
-        while (!s.empty()) {
-            int top_id = s.top();
-            s.pop();
-            ans = max (ans, a[top_id] * (s.empty() ? n : n-s.top()));
         }
 
         printf("Case %d: %d\n", Case, ans);
