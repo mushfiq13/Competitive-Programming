@@ -7,23 +7,20 @@ vector<int> adj[MAX];
 
 bool bfs (int n, int s) {
     queue<int> q;
-    vector<int> col (n, 0);
-    vector<bool> used (n, 0);
+    vector<int> col (n, -1);
 
     q.push (s);
-    used[s] = 1;
-    col[s] = 1;
+    col[s] = 0;
     while (!q.empty()) {
         int v = q.front();
         q.pop();
         for (int to : adj[v]) {
-            if (used[to] && col[to] == col[v])
-                return false;
-            else if (!used[to]) {
-                used[to] = 1;
+            if (col[to] == -1) {
                 col[to] = (col[v]+1) % 2;
                 q.push(to);
             }
+            else if (col[v] == col[to])
+                return false;
         }
     }
 
