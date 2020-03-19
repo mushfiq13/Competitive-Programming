@@ -29,13 +29,13 @@ bool isAnc(int u, int v) {
 }
 
 int LCA(int u, int v) {
-    if (!isAnc(u, v)) {
-        for (int i=K; i>=0; --i)
-            if (!isAnc(par[u][i], v))
-                u = par[u][i];
-        u = par[u][0];
-    }
-    return u;
+    if (isAnc(u, v)) return u;
+    if (isAnc(v, u)) return v;
+
+    for (int i=K; i>=0; --i)
+        if (!isAnc(par[u][i], v))
+            u = par[u][i];
+    return par[u][0];
 }
 
 int main() {
