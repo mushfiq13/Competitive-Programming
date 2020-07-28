@@ -12,25 +12,19 @@ int main() {
         for (int i=0; i<n; ++i) scanf("%d", &h[i]);
         for (int i=0; i<n; ++i) scanf("%d", &w[i]);
 
-        vector<int> dp (n, 1), dp2 (n, 1);
         int sumInc[n] = {}, sumDec[n] = {};
         int ansInc = 0, ansDec = 0;
         for (int i=0; i<n; ++i) {
             for (int j=0; j<i; ++j) {
-                if (h[j] < h[i]) {
-                    dp[i] = max(dp[i], dp[j]+1);
+                if (h[j] < h[i])
                     sumInc[i] = max(sumInc[i], sumInc[j]);
-                }
-                if (h[j] > h[i]) {
-                    dp2[i] = max(dp2[i], dp2[j]+1);
+                if (h[j] > h[i])
                     sumDec[i] = max(sumDec[i], sumDec[j]);
-                }
             }
             sumInc[i] += w[i];
             sumDec[i] += w[i];
             ansInc = max(ansInc, sumInc[i]);
             ansDec = max(ansDec, sumDec[i]);
-
         }
 
         if (ansInc >= ansDec)
