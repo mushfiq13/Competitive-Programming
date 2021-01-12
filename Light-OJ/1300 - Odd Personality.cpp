@@ -39,7 +39,7 @@ int dfsCC(int v, int p) {
             col[to] = col[v] ^ 1;
             compSize += dfsCC(to, v);
         }
-        if (col[v] == col[to]) isBip = 1;
+        if (col[v] == col[to]) isBip = 0;
     }
 
     return compSize;
@@ -60,8 +60,8 @@ int solve(int n) {
     int ans = 0;
     for (int i=0; i<n; ++i) {
         if (!used[i]) {
-            isBip = 0;
-            ans += isBip * dfsCC(i, i);
+            isBip = 1;
+            ans += dfsCC(i, i) * (isBip == 0);
         }
     }
 
