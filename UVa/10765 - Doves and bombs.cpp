@@ -44,9 +44,10 @@ void findCutVertices(int n) {
         used[i] = Count[i] = 0;
         time_in[i] = low[i] = 0;
     }
-    for (int i=0; i<n; ++i) {
-        if (!used[i])
-            dfs(i);
+
+    dfs(0);
+
+    for (int i=0; i<n; ++i) {                
         ans.push_back({i, Count[i]});
     }
 }
