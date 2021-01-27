@@ -1,3 +1,7 @@
+/*
+Similar problem: LOJ :: 1262 - Diagonal Sum
+Description written on the above problem
+*/
 #include <bits/stdc++.h>
 using namespace std;
 
