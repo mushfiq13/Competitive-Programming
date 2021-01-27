@@ -14,33 +14,42 @@ vector<int> g[205];
 vector<Edge> edgeTab;
 int pred[205], predEdge[205];
 
-int ans[205][205], cnt[205];
+int ans[52][52];
 int leftSum[105], rightSum[105];	// to take input
-int leftV[52][52], rightV[52][52];	// store the desired diagonal to [][].
+pair<int, int> intersect[52][52];	// store the (left arrow, right arrow)
+pair<int, int> cell[205][205];
 
 void init(int n, int m) {
 	edgeTab.clear();
 	for (int i=0; i<=(n+m-1)*2+1; ++i) {
 		g[i].clear();
-		cnt[i] = 0;
 	}
 
 	int v = 1;
 	for (int i=0; i<n; ++i) {
 		for (int j=0; j<m; ++j) {
-			/* store  diagonal to ech cell fow left side */
-			if (i-1>=0 && j+1<m) leftV[i][j] = leftV[i-1][j+1];
-			else leftV[i][j] = v++;
+			/* store left arrows */
+			if (i-1>=0 && j+1<m) intersect[i][j].first = intersect[i-1][j+1].first;
+			else intersect[i][j].first = v++;
 		}
 	}
 
 	for (int i=0; i<n; ++i) {
 		for (int j=m-1; j>=0; --j) {
-			/* store  diagonal to ech cell for right side */
-			if (i-1>=0 && j-1>=0) rightV[i][j] = rightV[i-1][j-1];
-			else rightV[i][j] = v++;
+			/* store right arrows */
+			if (i-1>=0 && j-1>=0) intersect[i][j].second = intersect[i-1][j-1].second;
+			else intersect[i][j].second = v++;
 		}
-	}	
+	}
+
+	for (int i=0; i<n; ++i) {
+		for (int j=0; j<m; ++j) {
+			int a = intersect[i][j].first;
+			int b = intersect[i][j].second;
+			/* a & b intersected in the (i, j) cell */
+			cell[a][b] = {i, j};
+		}
+	}
 }
 
 void add_edge(int u, int v,  int cap) {
@@ -120,65 +129,73 @@ int main() {
 		for (int i=1; i<=n+m-1; ++i)
 			scanf("%d", &rightSum[i]);
 
-		/* sending flow from left side to right side */
-		for (int i=0; i<n; ++i) {
-			for (int j=0; j<m; ++j) {
-				/*
-				assuming flow between (0 to 99), WHY?
-				if we set original 100, then if any cell get flow 0, that means flow
-				is happening (0 to 100). but there should be (1 to 100). Flow 0 is wrong.
-				
-				as there are 100 numbers from (1 to 100) can be placed in each cell, assuming there 
-				can be flow at any cell 0, then maximum flow for each cell can be only 99. Because
-				there can be 100 numbers from minimum flow 0 to 100th maximum flow 99.
-				
-				This will give us benefit. if cell get flow (0 to 99), then we can increment this flow
-				later due to respect of original flow. by this way, 0 will be 1, 99 will be 100, etc,.
-				*/
-				add_edge(leftV[i][j], rightV[i][j], 99);
-			}
-		}
+		/*
+		
+		Idea: ______MAX FLOW______
+		link source to left side arrows, and right side arrows to sink.
+		if in a cell, left & right sided arrow intersect, then link between them.
+		
+		Part 1:
+		We will send flow from source to left arrows following:
+		flow of (src -> left arrow): flow - (number of right sided arrows connected with this arrow).
+		WHY substracting from original flow?
+		We need to send flow to left arrow. let's say the flow is X = 10.
+		Flow X need to be distributed to number of cells which left arrow & right arrows intersected.
+		Assume total cells are Y = 4.
+		
+		We already know minimum flow of each cell can be only 1. So, We can think we already sent 1 flow from X
+		flows to Y cells.
+		By this way, X is now X - Y.
+		And now, we have to send X-Y flows to Y cells.
+		
+		NB: We can add these flow 1 at first time, or later.
 
-		/* save how many edges are connected with (left side -> right side) && (right side -> left side) */
-		for (int i=0; i<=(n+m-1)*2; ++i) {
-			cnt[i] = g[i].size();			
+		Part 2:
+		what will be capacity of each cell. capacity of (left arrow -> right arrow)?
+		We already get the minimum flow to each cell. And we know flow can be (1 to 100) to each cell.
+		As we added 1, then we can add maximum 99 flows and minimum 0 flow.
+		By this way, cell[][] will be between (1 to 100). i.e. (1+0, 1+1, .., 1+99).
+		So, capacity will be 99.
+
+		Part 3:
+		We will send flow from right arrows to sink following:
+		flow of (right arrow -> sink): flow - (number of left sided arrows connected with this arrow).
+		WHY substracting from original flow?
+		Similar of Part 1....
+		*/
+
+		/* sending flow from left arrow to right arrow */
+		for (int i=0; i<n; ++i) {
+			for (int j=0; j<m; ++j) {				
+				add_edge(intersect[i][j].first, intersect[i][j].second, 99);
+			}
 		}
 
 		int src = 0, sink = (n+m-1) * 2 + 1;
 		for (int i=1; i<=n+m-1; ++i) {
 			/*
 			sending flow source to left side, and reducing this flow by subtracting
-			number of edges form (left side -> right side).
+			number of edges form (i -> right sided arrows).
 			*/
-			add_edge(src, i, leftSum[i]-cnt[i]);			
+			add_edge(src, i, leftSum[i]-g[i].size());			
 			/*
 			sending flow right side to sink, and reducing this flow by subtracting
-			number of edges form (right side -> left side).
+			number of edges form (n+m-1+i -> left sided arrows).
 			*/
-			add_edge((n+m-1)+i, sink, rightSum[i]- cnt[(n+m-1)+i]);
-
-			/*
-			
-			why we are substracting some flow of (src -> left side) and (right side -> sink)?
-			we can think without diagonal. Assume, arrow is designed to each Row and each Column.
-			Actually, thinking about row & column, it's easier for me to design the graph.
-			Then same idea is applied for diagonal base flow.
-
-			Any cell can be 0, and that's why we need to add 1 to that cell, then we have to
-			reserved 1 flow for that cell. Then? we can reserved 1 flow for each cell. For this
-			we need to substract reserved flows from each row & column. This is shown below:
-
-			flow of (src -> Row[i]): flow - (number of column connected with Row[i].
-			flow of (col[i] -> sink): flow - (number of rows connected with col[i].					
-			*/
+			add_edge((n+m-1)+i, sink, rightSum[i]- g[n+m-1+i].size());
 		}
 
 		maxFlow(sink, src, sink);
+		
 		for (int i=1; i<=n+m-1; ++i) {
 			for (int j : g[i]) {				
 				int to = edgeTab[j].to;
-				if (to > i)
-					ans[i][to] = edgeTab[j].flow;
+				if (to > i) {
+					/* flow of (i -> to)  set in the (x, y) position*/
+					int x = cell[i][to].first;
+					int y = cell[i][to].second;
+					ans[x][y] = edgeTab[j].flow;
+				}
 			}
 		}
 
@@ -186,7 +203,7 @@ int main() {
 		for (int i=0; i<n; ++i) {
 			for (int j=0; j<m; ++j) {
 				if (j) putchar(' ');
-				printf("%d", ans[leftV[i][j]][rightV[i][j]] + 1);
+				printf("%d", ans[i][j] + 1);
 			}
 			puts("");
 		}
