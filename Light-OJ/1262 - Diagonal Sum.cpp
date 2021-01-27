@@ -154,7 +154,7 @@ int main() {
 		what will be capacity of each cell. capacity of (left arrow -> right arrow)?
 		We already get the minimum flow to each cell. And we know flow can be (1 to 100) to each cell.
 		As we added 1, then we can add maximum 99 flows and minimum 0 flow.
-		By this way, cell[][] will be between (1 to 100). i.e. (1+0, 1+1, .., 1+99).
+		By this way, ans[][] will be between (1 to 100). i.e. (1+0, 1+1, .., 1+99).
 		So, capacity will be 99.
 
 		Part 3:
