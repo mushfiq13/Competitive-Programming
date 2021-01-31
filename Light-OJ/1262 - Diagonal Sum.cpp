@@ -148,7 +148,11 @@ int main() {
         
         X must be same as sum of Y cells flow.  We already know minimum flow of each cell can be only 1.
         And we already sent 1 flow from X flows to Y cells.        
-        And now, we have to send X-Y flows to Y cells. Because, Y cells have Y flows.   
+        And now, we have to send X-Y flows to Y cells. Because, Y cells already have Y flows.
+        
+        NB: We can do this in another way. As we already pushed Y flows, So, from source to left arrow,
+        we can say, capacity is original capacity. And flow is Y. Whatever I solved this problem by above
+        way.
 
         Part 2:
         what will be capacity of each cell. capacity of (left arrow -> right arrow)?
